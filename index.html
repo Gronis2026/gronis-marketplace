@@ -249,7 +249,7 @@
     font-family: 'Playfair Display', serif;
   }
   
-  .card-price-usd {
+  .card-price-brl {
     font-size: 13px;
     color: #999;
     font-weight: 400;
@@ -477,11 +477,11 @@
   
   <select id="filter-price">
     <option value="all">Price Range</option>
-    <option value="500000">Up to R$ 500K</option>
-    <option value="1000000">Up to R$ 1M</option>
-    <option value="1500000">Up to R$ 1.5M</option>
-    <option value="2000000">Up to R$ 2M</option>
-    <option value="999999999">R$ 2M+</option>
+    <option value="500000">Up to $100K</option>
+    <option value="1000000">Up to $200K</option>
+    <option value="1500000">Up to $300K</option>
+    <option value="2000000">Up to $400K</option>
+    <option value="999999999">$400K+</option>
   </select>
   
   <select id="filter-vnj">
@@ -515,15 +515,15 @@
     </div>
     <div class="insights-stats">
       <div class="insight-stat">
-        <div class="insight-value">R$ 12,450</div>
+        <div class="insight-value">$2,394</div>
         <div class="insight-label">Avg. price/m² Ingleses</div>
       </div>
       <div class="insight-stat">
-        <div class="insight-value">R$ 18,200</div>
+        <div class="insight-value">$3,500</div>
         <div class="insight-label">Avg. price/m² Jurerê</div>
       </div>
       <div class="insight-stat">
-        <div class="insight-value">R$ 14,100</div>
+        <div class="insight-value">$2,712</div>
         <div class="insight-label">Avg. price/m² Campeche</div>
       </div>
       <div class="insight-stat">
@@ -585,14 +585,14 @@ function parsePrice(s) {
   return parseFloat(s.replace(/\./g, '').replace(',', '.')) || 0;
 }
 
-function fmtBRL(v) {
-  if (!v) return 'Price on request';
-  return 'R$ ' + v.toLocaleString('pt-BR', {maximumFractionDigits:0});
+function fmtUSD(brl) {
+  if (!brl) return 'Price on request';
+  return '$' + Math.round(brl/USD_RATE).toLocaleString('en-US');
 }
 
-function fmtUSD(brl) {
-  if (!brl || brl < 5000) return '';
-  return '≈ USD ' + Math.round(brl/USD_RATE).toLocaleString('en-US');
+function fmtBRL(v) {
+  if (!v) return '';
+  return 'R$ ' + v.toLocaleString('pt-BR', {maximumFractionDigits:0});
 }
 
 function normLoc(l) {
@@ -629,7 +629,7 @@ function whatsappUrl(l, id) {
   const price = parsePrice(l.price);
   const msg = encodeURIComponent(
     `Hi! I'm interested in property ${id} in ${loc}, Florianópolis` + 
-    (price ? ` (${fmtBRL(price)})` : '') +
+    (price ? ` (${fmtUSD(price)})` : '') +
     `. Could you please send me more details?`
   );
   return `https://wa.me/${WHATSAPP}?text=${msg}`;
@@ -713,8 +713,8 @@ function renderGrid(items) {
       </div>
       <div class="card-body">
         <div class="card-location">📍 ${normLoc(l.location)}, Florianópolis</div>
-        <div class="card-price">${price ? fmtBRL(price) : 'Price on request'}</div>
-        <div class="card-price-usd">${fmtUSD(price)}</div>
+        <div class="card-price">${price ? fmtUSD(price) : 'Price on request'}</div>
+        <div class="card-price-brl">${price ? fmtBRL(price) : ''}</div>
         <div class="card-features">
           ${l.bedrooms ? `<div class="feature"><span class="feature-icon">🛏</span> ${l.bedrooms}</div>` : ''}
           ${l.bathrooms ? `<div class="feature"><span class="feature-icon">🚿</span> ${l.bathrooms}</div>` : ''}
@@ -740,7 +740,7 @@ function openModal(idx) {
   
   document.getElementById('modal-title').textContent = `${l.propType || 'Property'} in ${normLoc(l.location)}`;
   document.getElementById('modal-location').textContent = `📍 ${normLoc(l.location)}, Florianópolis · ${id}`;
-  document.getElementById('modal-price').textContent = price ? `${fmtBRL(price)} ${fmtUSD(price)}` : 'Price on request';
+  document.getElementById('modal-price').textContent = price ? `${fmtUSD(price)} (${fmtBRL(price)})` : 'Price on request';
   
   let features = '';
   if (l.bedrooms) features += `<div class="feature"><span class="feature-icon">🛏</span> ${l.bedrooms} bedrooms</div>`;
