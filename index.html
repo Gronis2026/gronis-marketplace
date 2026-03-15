@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GRONIS Marketplace — Florianópolis Real Estate</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap');
+  
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  body { 
+    font-family: 'Inter', -apple-system, sans-serif; 
+    background: #F8F6F0; 
+    color: #1B2951; 
+  }
+  
+  .header {
+    background: linear-gradient(135deg, #1B2951 0%, #0F1A33 100%);
+    color: white;
+    padding: 20px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  .logo-icon {
+    width: 42px; height: 42px;
+    background: linear-gradient(135deg, #D4AF37, #F0D060);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; font-weight: 700; color: white;
+  }
+  
+  .logo-text { font-size: 22px; font-weight: 700; letter-spacing: 2px; }
+  .logo-sub { font-size: 11px; color: #D4AF37; letter-spacing: 3px; text-transform: uppercase; }
+  
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  
+  .stats-bar {
+    display: flex;
+    gap: 20px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.7);
+  }
+  
+  .stats-bar span { color: #D4AF37; font-weight: 600; }
+  
+  .lang-switch { display: flex; gap: 4px; }
+  .lang-btn {
+    padding: 5px 10px;
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    background: transparent;
+    color: rgba(255,255,255,0.6);
+  }
+  .lang-btn.active { background: #D4AF37; color: #1B2951; border-color: #D4AF37; font-weight: 600; }
+  
+  /* VALUE PROPOSITION BAR */
+  .value-bar {
+    background: linear-gradient(90deg, #D4AF37 0%, #E8C84A 100%);
+    color: #1B2951;
+    padding: 10px 40px;
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+  
+  .value-item { display: flex; align-items: center; gap: 6px; }
+  .value-item .icon { font-size: 16px; }
+  
+  /* FILTERS */
+  .filters {
+    background: white;
+    padding: 14px 40px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+  
+  select {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 13px;
+    background: #fafafa;
+    color: #1B2951;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+  }
+  select:hover { border-color: #D4AF37; }
+  select:focus { outline: none; border-color: #D4AF37; }
+  
+  .filter-separator {
+    width: 1px;
+    height: 24px;
+    background: #eee;
+    margin: 0 4px;
+  }
+  
+  .btn-reset {
+    padding: 8px 14px;
+    background: none;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 12px;
+    cursor: pointer;
+    color: #888;
+  }
+  .btn-reset:hover { border-color: #1B2951; color: #1B2951; }
+  
+  /* CONTENT */
+  .content {
+    padding: 24px 40px;
+    max-width: 1440px;
+    margin: 0 auto;
+  }
+  
+  .results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .results-count { font-size: 15px; color: #666; }
+  .results-count strong { color: #1B2951; }
+  
+  /* GRID */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+    gap: 20px;
+  }
+  
+  .card {
+    background: white;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 28px rgba(0,0,0,0.12);
+  }
+  
+  .card-img {
+    height: 210px;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .card-img-bg {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  
+  .card-img-placeholder {
+    width: 100%; height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .placeholder-icon { font-size: 40px; opacity: 0.4; }
+  .placeholder-text { font-size: 12px; opacity: 0.5; color: white; text-transform: uppercase; letter-spacing: 2px; }
+  
+  .card-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .badge-sale { background: #1B2951; color: white; }
+  .badge-rental { background: #D4AF37; color: #1B2951; }
+  .badge-annual { background: #2D6A4F; color: white; }
+  
+  .card-vnj {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    padding: 4px 10px;
+    background: rgba(45, 106, 79, 0.9);
+    color: white;
+    font-size: 10px;
+    font-weight: 600;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+  }
+  
+  .card-gronis-id {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    padding: 3px 8px;
+    background: rgba(0,0,0,0.5);
+    color: rgba(255,255,255,0.8);
+    font-size: 10px;
+    border-radius: 4px;
+    font-family: monospace;
+  }
+  
+  .card-body { padding: 16px 18px; }
+  
+  .card-location {
+    font-size: 12px;
+    color: #999;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  
+  .card-price {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1B2951;
+    margin-bottom: 2px;
+    font-family: 'Playfair Display', serif;
+  }
+  
+  .card-price-usd {
+    font-size: 13px;
+    color: #999;
+    font-weight: 400;
+    font-family: 'Inter', sans-serif;
+    margin-bottom: 10px;
+  }
+  
+  .card-features {
+    display: flex;
+    gap: 14px;
+    font-size: 13px;
+    color: #555;
+    padding: 12px 0;
+    border-top: 1px solid #f0f0f0;
+    border-bottom: 1px solid #f0f0f0;
+    margin-bottom: 14px;
+  }
+  
+  .feature { display: flex; align-items: center; gap: 5px; }
+  .feature-icon { font-size: 15px; }
+  .feature-label { color: #999; font-size: 11px; }
+  
+  .card-cta {
+    display: flex;
+    gap: 8px;
+  }
+  
+  .btn-whatsapp {
+    flex: 1;
+    padding: 10px;
+    background: #25D366;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .btn-whatsapp:hover { background: #1DAF54; }
+  
+  .btn-details {
+    padding: 10px 16px;
+    background: #f5f5f5;
+    color: #1B2951;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .btn-details:hover { background: #eee; }
+  
+  /* MARKET INSIGHTS SIDEBAR (future) */
+  .insights-banner {
+    background: linear-gradient(135deg, #1B2951, #2A3F6E);
+    border-radius: 14px;
+    padding: 24px;
+    color: white;
+    margin-top: 30px;
+  }
+  
+  .insights-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-family: 'Playfair Display', serif;
+  }
+  
+  .insights-text { font-size: 13px; color: rgba(255,255,255,0.7); line-height: 1.6; margin-bottom: 16px; }
+  
+  .insights-stats {
+    display: flex;
+    gap: 24px;
+  }
+  
+  .insight-stat { text-align: center; }
+  .insight-value { font-size: 22px; font-weight: 700; color: #D4AF37; }
+  .insight-label { font-size: 11px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+  
+  /* FOOTER */
+  .footer {
+    text-align: center;
+    padding: 40px;
+    color: #999;
+    font-size: 12px;
+    border-top: 1px solid #eee;
+    margin-top: 40px;
+  }
+  .footer a { color: #D4AF37; text-decoration: none; }
+  
+  /* MODAL */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-overlay.active { display: flex; }
+  
+  .modal {
+    background: white;
+    border-radius: 16px;
+    max-width: 500px;
+    width: 90%;
+    padding: 32px;
+    position: relative;
+  }
+  
+  .modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    border: none;
+    background: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #999;
+  }
+  
+  .modal h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    margin-bottom: 8px;
+  }
+  
+  .modal p { color: #666; font-size: 14px; line-height: 1.6; margin-bottom: 20px; }
+  
+  .modal-price { font-size: 24px; font-weight: 700; color: #1B2951; margin-bottom: 16px; }
+  
+  .modal-features {
+    display: flex; gap: 16px; margin-bottom: 20px;
+    padding: 12px 0; border-top: 1px solid #f0f0f0; border-bottom: 1px solid #f0f0f0;
+  }
+  
+  .modal-cta {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    background: #25D366;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+  }
+  
+  .modal-note {
+    text-align: center;
+    font-size: 11px;
+    color: #999;
+    margin-top: 10px;
+  }
+  
+  @media (max-width: 768px) {
+    .header { padding: 14px 16px; flex-direction: column; gap: 10px; }
+    .value-bar { padding: 8px 16px; gap: 16px; flex-wrap: wrap; font-size: 11px; }
+    .filters { padding: 10px 16px; }
+    .content { padding: 16px; }
+    .grid { grid-template-columns: 1fr; }
+    .stats-bar { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">
+    <div class="logo-icon">G</div>
+    <div>
+      <div class="logo-text">GRONIS</div>
+      <div class="logo-sub">Marketplace</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="stats-bar">
+      <div><span id="total-count">0</span> properties</div>
+      <div>Florianópolis, SC</div>
+    </div>
+    <div class="lang-switch">
+      <button class="lang-btn active" onclick="setLang('en')">🇬🇧 EN</button>
+      <button class="lang-btn" onclick="setLang('ru')">🇷🇺 RU</button>
+    </div>
+  </div>
+</div>
+
+<div class="value-bar">
+  <div class="value-item"><span class="icon">🌍</span> Curated for international investors</div>
+  <div class="value-item"><span class="icon">📊</span> Market analytics & ROI data</div>
+  <div class="value-item"><span class="icon">🔒</span> CRECI licensed broker</div>
+  <div class="value-item"><span class="icon">🇧🇷</span> Full legal support in EN/RU</div>
+</div>
+
+<div class="filters">
+  <select id="filter-type">
+    <option value="all">All Types</option>
+    <option value="sale">🏷 For Sale</option>
+    <option value="rental_seasonal">☀️ Seasonal Rental</option>
+    <option value="rental_annual">📅 Annual Rental</option>
+  </select>
+  
+  <select id="filter-location">
+    <option value="all">All Locations</option>
+  </select>
+  
+  <select id="filter-beds">
+    <option value="all">Bedrooms</option>
+    <option value="1">1+</option>
+    <option value="2">2+</option>
+    <option value="3">3+</option>
+    <option value="4">4+</option>
+  </select>
+  
+  <select id="filter-price">
+    <option value="all">Price Range</option>
+    <option value="500000">Up to R$ 500K</option>
+    <option value="1000000">Up to R$ 1M</option>
+    <option value="1500000">Up to R$ 1.5M</option>
+    <option value="2000000">Up to R$ 2M</option>
+    <option value="999999999">R$ 2M+</option>
+  </select>
+  
+  <select id="filter-vnj">
+    <option value="all">All Properties</option>
+    <option value="yes">✅ ВНЖ Eligible (R$ 1M+)</option>
+  </select>
+  
+  <div class="filter-separator"></div>
+  
+  <select id="sort-by">
+    <option value="price-asc">Price: Low → High</option>
+    <option value="price-desc">Price: High → Low</option>
+    <option value="area-desc">Area: Largest first</option>
+  </select>
+  
+  <button class="btn-reset" onclick="resetFilters()">✕ Reset</button>
+</div>
+
+<div class="content">
+  <div class="results-header">
+    <div class="results-count">Showing <strong id="showing-count">0</strong> properties in Florianópolis, Santa Catarina</div>
+  </div>
+  
+  <div class="grid" id="listings-grid"></div>
+  
+  <div class="insights-banner">
+    <div class="insights-title">📊 Florianópolis Market Snapshot</div>
+    <div class="insights-text">
+      Average price per m² in top investment areas. Data aggregated from 50+ local agencies and platforms.
+      Contact us for a detailed investment analysis of any property.
+    </div>
+    <div class="insights-stats">
+      <div class="insight-stat">
+        <div class="insight-value">R$ 12,450</div>
+        <div class="insight-label">Avg. price/m² Ingleses</div>
+      </div>
+      <div class="insight-stat">
+        <div class="insight-value">R$ 18,200</div>
+        <div class="insight-label">Avg. price/m² Jurerê</div>
+      </div>
+      <div class="insight-stat">
+        <div class="insight-value">R$ 14,100</div>
+        <div class="insight-label">Avg. price/m² Campeche</div>
+      </div>
+      <div class="insight-stat">
+        <div class="insight-value">14.3%</div>
+        <div class="insight-label">Avg. total return</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <p>© 2026 <a href="https://gronisbrazil.com">GRONIS International Real Estate</a> · CRECI 11410-J · +55 (48) 98875-2300</p>
+  <p style="margin-top: 4px; font-size: 11px;">Properties sourced from 50+ verified local agencies. Prices may vary. Contact us for current availability.</p>
+</div>
+
+<!-- DETAIL MODAL -->
+<div class="modal-overlay" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <h2 id="modal-title"></h2>
+    <div id="modal-location" style="color:#999;font-size:13px;margin-bottom:12px;"></div>
+    <div class="modal-price" id="modal-price"></div>
+    <div class="modal-features" id="modal-features"></div>
+    <p id="modal-desc" style="font-size:13px;color:#666;"></p>
+    <a class="modal-cta" id="modal-cta" href="#" target="_blank">💬 Request Details via WhatsApp</a>
+    <div class="modal-note">Free consultation · No obligation · Response within 1 hour</div>
+  </div>
+</div>
+
+<script>
+const LISTINGS = [{"title": "\n\t\t\t  Floripa Houses - Venda e aluguel de temporada de imóveis em Florianópolis. Ingleses, Cachoeira de Bom Jesus, Canasvieiras, Jurerê\n\t\t\t", "code": "3039", "location": "Ingleses", "price": "729.000,00", "bedrooms": 2, "bathrooms": 2, "parking": 1, "area": 97, "type": "sale"}, {"title": "\n\t\t\t  Floripa Houses - Venda e aluguel de temporada de imóveis em Florianópolis. Ingleses, Cachoeira de Bom Jesus, Canasvieiras, Jurerê\n\t\t\t", "code": "2628", "location": "Ingleses", "price": "1.030.000,00", "bedrooms": 2, "bathrooms": 2, "parking": 2, "area": 220, "type": "sale"}, {"title": "\n\t\t\t  Floripa Houses - Venda e aluguel de temporada de imóveis em Florianópolis. Ingleses, Cachoeira de Bom Jesus, Canasvieiras, Jurerê\n\t\t\t", "code": "1589", "location": "Santinho", "price": "800,00", "bedrooms": null, "bathrooms": 1, "parking": 3, "area": 530, "type": "sale"}, {"title": "\n\t\t\t  Floripa Houses - Venda e aluguel de temporada de imóveis em Florianópolis. Ingleses, Cachoeira de Bom Jesus, Canasvieiras, Jurerê\n\t\t\t", "code": "2674", "location": "Centro", "price": "2.600.000,00", "bedrooms": 3, "bathrooms": 2, "parking": 2, "area": 20181, "type": "sale"}, {"title": "\n\t\t\t  Floripa Houses - Venda e aluguel de temporada de imóveis em Florianópolis. Ingleses, Cachoeira de Bom Jesus, Canasvieiras, Jurerê\n\t\t\t", "code": "2989", "location": "Ingleses", "price": "900.000,00", "bedrooms": 3, "bathrooms": 2, "parking": 2, "area": 130, "type": "sale"}, {"title": "\n\t\t\t  Floripa Houses - Venda e aluguel de temporada de imóveis em Florianópolis. Ingleses, Cachoeira de Bom Jesus, Canasvieiras, Jurerê\n\t\t\t", "code": "3029", "location": "Ingleses", "price": "670.000,00", "bedrooms": 2, "bathrooms": 2, "parking": 2, "area": 100, "type": "sale"}, {"title": "\n\t\t\t  Floripa Houses - Venda e aluguel de temporada de imóveis em Florianópolis. Ingleses, Cachoeira de Bom Jesus, Canasvieiras, Jurerê\n\t\t\t", "code": "2837", "location": "Ingleses", "price": "2.800.000,00", "bedrooms": 2, "bathrooms": 3, "parking": 1, "area": 170, "type": "sale"}, {"title": "\n\t\t\t  Floripa Houses - Venda e aluguel de temporada de imóveis em Florianópolis. Ingleses, Cachoeira de Bom Jesus, Canasvieiras, Jurerê\n\t\t\t", "code": "2971", "location": "Ingleses", "price": "1.700.000,00", "bedrooms": 3, "bathrooms": 2, "parking": 2, "area": 600, "type": "sale"}, {"title": "\n\t\t\t  Floripa Houses - Venda e aluguel de temporada de imóveis em Florianópolis. Ingleses, Cachoeira de Bom Jesus, Canasvieiras, Jurerê\n\t\t\t", "code": "2133", "location": "Jurerê", "price": "931.000,00", "bedrooms": 3, "bathrooms": 3, "parking": 2, "area": 133, "type": "sale"}, {"title": "\n\t\t\t  Floripa Houses - Venda e aluguel de temporada de imóveis em Florianópolis. Ingleses, Cachoeira de Bom Jesus, Canasvieiras, Jurerê\n\t\t\t", "code": "2753", "location": "Ingleses", "price": "539.000,00", "bedrooms": 2, "bathrooms": 2, "parking": 1, "area": 77, "type": "sale"}, {"title": "\n\t\t\t  Floripa Houses - Venda e aluguel de temporada de imóveis em Florianópolis. Ingleses, Cachoeira de Bom Jesus, Canasvieiras, Jurerê\n\t\t\t", "code": "2976", "location": "Ingleses", "price": "1.890.000,00", "bedrooms": 4, "bathrooms": 4, "parking": 2, "area": 291, "type": "sale"}, {"title": "\n\t\t\t  Floripa Houses - Venda e aluguel de temporada de imóveis em Florianópolis. Ingleses, Cachoeira de Bom Jesus, Canasvieiras, Jurerê\n\t\t\t", "code": "3022", "location": "Ingleses", "price": "1.200.000,00", "bedrooms": 9, "bathrooms": 6, "parking": 1, "area": 297, "type": "sale"}, {"title": "\n\t\t\t  Floripa Houses - Venda e aluguel de temporada de imóveis em Florianópolis. Ingleses, Cachoeira de Bom Jesus, Canasvieiras, Jurerê\n\t\t\t", "code": "2807", "location": "Vargem", "price": "305.000,00", "bedrooms": 3, "bathrooms": 2, "parking": 4, "area": 120, "type": "sale"}, {"title": "\n\t\t\t  Floripa Houses - Venda e aluguel de temporada de imóveis em Florianópolis. Ingleses, Cachoeira de Bom Jesus, Canasvieiras, Jurerê\n\t\t\t", "code": "2931", "location": "Ingleses", "price": "797.000,00", "bedrooms": 2, "bathrooms": 2, "parking": 1, "area": 97, "type": "sale"}, {"title": "\n\t\t\t  Floripa Houses - Venda e aluguel de temporada de imóveis em Florianópolis. Ingleses, Cachoeira de Bom Jesus, Canasvieiras, Jurerê\n\t\t\t", "code": "2331", "location": "Centro", "price": "1.500.000,00", "bedrooms": 3, "bathrooms": 4, "parking": 2, "area": 260, "type": "sale"}, {"title": "\n\t\t\t  Floripa Houses - Venda e aluguel de temporada de imóveis em Florianópolis. Ingleses, Cachoeira de Bom Jesus, Canasvieiras, Jurerê\n\t\t\t", "code": "2330", "location": "Canasvieiras", "price": "1.600.000,00", "bedrooms": 2, "bathrooms": 1, "parking": 2, "area": 253, "type": "sale"}, {"title": "\n\t\t\t  Floripa Houses - Venda e aluguel de temporada de imóveis em Florianópolis. Ingleses, Cachoeira de Bom Jesus, Canasvieiras, Jurerê\n\t\t\t", "code": "2400", "location": "Ingleses", "price": "1.730.000,00", "bedrooms": 3, "bathrooms": 3, "parking": 4, "area": 250, "type": "sale"}, {"title": "\n\t\t\t  Floripa Houses - Venda e aluguel de temporada de imóveis em Florianópolis. Ingleses, Cachoeira de Bom Jesus, Canasvieiras, Jurerê\n\t\t\t", "code": "3086", "location": "Ingleses", "price": "1.050.000,00", "bedrooms": 2, "bathrooms": 2, "parking": 1, "area": 124, "type": "sale"}, {"title": "\n\t\t\t  Floripa Houses - Venda e aluguel de temporada de imóveis em Florianópolis. Ingleses, Cachoeira de Bom Jesus, Canasvieiras, Jurerê\n\t\t\t", "code": "2636", "location": "Rio Vermelho", "price": "330.000,00", "bedrooms": 2, "bathrooms": 2, "parking": 4, "area": 140, "type": "sale"}, {"title": "\n\t\t\t  Floripa Houses - Venda e aluguel de temporada de imóveis em Florianópolis. Ingleses, Cachoeira de Bom Jesus, Canasvieiras, Jurerê\n\t\t\t", "code": "2683", "location": "Cachoeira", "price": "1.800.000,00", "bedrooms": 3, "bathrooms": 5, "parking": null, "area": 4200, "type": "sale"}, {"title": "\n\t\t\t  Floripa Houses - Venda e aluguel de temporada de imóveis em Florianópolis. Ingleses, Cachoeira de Bom Jesus, Canasvieiras, Jurerê\n\t\t\t", "code": "2178", "location": "Ingleses", "price": "2.850.000,00", "bedrooms": 3, "bathrooms": 4, "parking": 4, "area": 420, "type": "sale"}, {"title": "\n\t\t\t  Floripa Houses - Venda e aluguel de temporada de imóveis em Florianópolis. Ingleses, Cachoeira de Bom Jesus, Canasvieiras, Jurerê\n\t\t\t", "code": "3088", "location": "Ingleses", "price": "950.000,00", "bedrooms": 3, "bathrooms": 2, "parking": 2, "area": 120, "type": "sale"}, {"title": "\n\t\t\t  Floripa Houses - Venda e aluguel de temporada de imóveis em Florianópolis. Ingleses, Cachoeira de Bom Jesus, Canasvieiras, Jurerê\n\t\t\t", "code": "3045", "location": "Santinho", "price": "715.000,00", "bedrooms": 2, "bathrooms": 2, "parking": 2, "area": 110, "type": "sale"}, {"title": "\n\t\t\t  Floripa Houses - Venda e aluguel de temporada de imóveis em Florianópolis. Ingleses, Cachoeira de Bom Jesus, Canasvieiras, Jurerê\n\t\t\t", "code": "2507", "location": "Canasvieiras", "price": "1.350.000,00", "bedrooms": 3, "bathrooms": 2, "parking": 1, "area": 260, "type": "sale"}, {"title": "\n\t\t\t  Floripa Houses - Venda e aluguel de temporada de imóveis em Florianópolis. Ingleses, Cachoeira de Bom Jesus, Canasvieiras, Jurerê\n\t\t\t", "code": "2213", "location": "Ingleses", "price": "2.600,00", "bedrooms": 4, "bathrooms": 3, "parking": 1, "area": 280, "type": "sale"}, {"title": "\n\t\t\t  Floripa Houses - Venda e aluguel de temporada de imóveis em Florianópolis. Ingleses, Cachoeira de Bom Jesus, Canasvieiras, Jurerê\n\t\t\t", "code": "2694", "location": "Centro", "price": "3.600.000,00", "bedrooms": 2, "bathrooms": 5, "parking": 2, "area": 550, "type": "sale"}, {"title": "\n\t\t\t  Floripa Houses - Venda e aluguel de temporada de imóveis em Florianópolis. Ingleses, Cachoeira de Bom Jesus, Canasvieiras, Jurerê\n\t\t\t", "code": "1060", "location": "Ingleses", "price": "780.000,00", "bedrooms": 3, "bathrooms": 1, "parking": 1, "area": 108, "type": "sale"}, {"title": "\n\t\t\t  Floripa Houses - Venda e aluguel de temporada de imóveis em Florianópolis. Ingleses, Cachoeira de Bom Jesus, Canasvieiras, Jurerê\n\t\t\t", "code": "2861", "location": "Ingleses", "price": "650.000,00", "bedrooms": 3, "bathrooms": 2, "parking": 1, "area": 78, "type": "sale"}, {"title": "\n\t\t\t  Floripa Houses - Venda e aluguel de temporada de imóveis em Florianópolis. Ingleses, Cachoeira de Bom Jesus, Canasvieiras, Jurerê\n\t\t\t", "code": "3096", "location": "Ingleses", "price": "435.000,00", "bedrooms": 2, "bathrooms": 3, "parking": 1, "area": 148, "type": "sale"}, {"title": "Apartamento Garden 3 dormitórios com 91,72m² Praia dos Ingleses, Florianópolis\n Ingleses do Rio Vermelho, Florianópolis-SC", "code": "3301", "location": "Ingleses", "price": "1.575.000", "bedrooms": 3, "bathrooms": 2, "parking": 2, "area": 72, "type": "sale"}, {"title": "Cobertura com 3 suítes na Praia dos Ingleses, Florianópolis - SC\n Ingleses do Rio Vermelho, Florianópolis-SC", "code": "1808", "location": "Ingleses", "price": "1.561.636", "bedrooms": 3, "bathrooms": 3, "parking": 2, "area": 37, "type": "sale"}, {"title": "Prédio contendo 8 lofts mobiliados no bairro Trindade, Florianópolis/SC\n Trindade, Florianópolis-SC", "code": "4291", "location": "Trindade", "price": "1.500.000", "bedrooms": 4, "bathrooms": 8, "parking": null, "area": 0, "type": "sale"}, {"title": "Simplesmente Apaixonante!Usufrua do melhor da Vida e conheça esse empreendimento\n João Paulo, Florianópolis-SC", "code": "5780", "location": "Centro", "price": "1.466.659", "bedrooms": 3, "bathrooms": 3, "parking": 1, "area": 34, "type": "sale"}, {"title": "Apartamento duplex com 3 suítes (sendo 1 master) 120 metros do mar\n Ingleses do Rio Vermelho, Florianópolis-SC", "code": "5728", "location": "Ingleses", "price": "1.445.611", "bedrooms": 3, "bathrooms": 4, "parking": 1, "area": 1, "type": "sale"}, {"title": "Simplesmente Apaixonante!Usufrua do melhor da Vida e conheça esse empreendimento\n João Paulo, Florianópolis-SC", "code": "5781", "location": "Centro", "price": "1.444.993", "bedrooms": 2, "bathrooms": 3, "parking": 1, "area": 91, "type": "sale"}, {"title": "Apartamento a 120 metros do mar, 2 dormitórios à venda Ingleses Norte\n Ingleses do Rio Vermelho, Florianópolis-SC", "code": "1201", "location": "Ingleses", "price": "1.420.000", "bedrooms": 2, "bathrooms": 3, "parking": 1, "area": 61, "type": "sale"}, {"title": "Apartamento à Venda em Ingleses do Rio Vermelho, Florianópolis - SC\n Ingleses do Rio Vermelho, Florianópolis-SC", "code": "2743", "location": "Ingleses", "price": "1.400.000", "bedrooms": 3, "bathrooms": 4, "parking": 2, "area": 95, "type": "sale"}, {"title": "Apartamento 4 dormitórios, 1 suíte 133,43m² Cachoeira do Bom Jesus Florianópolis\n Cachoeira do Bom Jesus, Florianópolis-SC", "code": "5889", "location": "Centro", "price": "1.400.000", "bedrooms": 4, "bathrooms": 3, "parking": 2, "area": 43, "type": "sale"}, {"title": "Apartamento com duas suítes a 120 metros do mar - Ingleses- Florianópolis/SC\n Ingleses do Rio Vermelho, Florianópolis-SC", "code": "5660", "location": "Ingleses", "price": "1.379.400", "bedrooms": 2, "bathrooms": 3, "parking": 1, "area": 70, "type": "sale"}, {"title": "Apartamento duplex à Venda em Ingleses do Rio Vermelho, Florianópolis - SC\n Ingleses do Rio Vermelho, Florianópolis-SC", "code": "5717", "location": "Ingleses", "price": "1.379.400", "bedrooms": 3, "bathrooms": 4, "parking": 1, "area": 43, "type": "sale"}, {"title": "Cobertura mobiliada com 3 quartos a 380m da Praia dos Ingleses Florianópolis/SC\n Ingleses do Rio Vermelho, Florianópolis-SC", "code": "5769", "location": "Ingleses", "price": "1.350.000", "bedrooms": 3, "bathrooms": 3, "parking": 2, "area": 0, "type": "sale"}, {"title": "Vista Mar Exclusiva, Design Sofisticado e Conforto à Beira-Mar em Florianópolis!\n Ingleses do Rio Vermelho, Florianópolis-SC", "code": "6109", "location": "Ingleses", "price": "1.350.000", "bedrooms": 2, "bathrooms": 2, "parking": 2, "area": 0, "type": "sale"}, {"title": "Excelente oportunidade\n Canasvieiras, Florianópolis-SC", "code": "6985", "location": "Canasvieiras", "price": "1.348.909", "bedrooms": 3, "bathrooms": 1, "parking": 1, "area": 5, "type": "sale"}, {"title": "Apartamento 2 suítes, 112,31m² - bairro Jurerê - Florianópolis - SC\n Jurere Leste, Florianópolis-SC", "code": "6557", "location": "Jurerê", "price": "1.346.578", "bedrooms": 2, "bathrooms": 2, "parking": 1, "area": 31, "type": "sale"}, {"title": "Conquiste sua cobertura no Ingleses 2 dormitórios\n Ingleses do Rio Vermelho, Florianópolis-SC", "code": "6950", "location": "Ingleses", "price": "1.329.000", "bedrooms": 3, "bathrooms": 2, "parking": 2, "area": 11, "type": "sale"}, {"title": "Linda cobertura com 3 dormitórios e terraço espaçoso PRONTA PARA MORAR!\n Ingleses do Rio Vermelho, Florianópolis-SC", "code": "6942", "location": "Ingleses", "price": "1.325.625", "bedrooms": 3, "bathrooms": 2, "parking": 2, "area": 50, "type": "sale"}, {"title": "Amplo apartamento de 3 dormitórios sendo 1 suíte com 94,37m², Florianópolis/SC\n Saco Grande, Florianópolis-SC", "code": "5562", "location": "Ingleses", "price": "1.325.442", "bedrooms": 3, "bathrooms": 2, "parking": 2, "area": 37, "type": "sale"}, {"title": "Cobertura em condomínio à Venda em Florianópolis - SC\n Ingleses do Rio Vermelho, Florianópolis-SC", "code": "5424", "location": "Ingleses", "price": "1.325.000", "bedrooms": 4, "bathrooms": 3, "parking": 1, "area": 0, "type": "sale"}, {"title": "Apartamento com 3 dormitórios à venda, 95 m² -Itacorubi - Florianópolis/SC\n Itacorubi, Florianópolis-SC", "code": "1173", "location": "Itacorubi", "price": "1.299.500", "bedrooms": 3, "bathrooms": 2, "parking": 2, "area": 95, "type": "sale"}, {"title": "Mar de Jurerê Imóveis", "code": "H0001-E", "location": "Jurerê", "price": "7.000,00", "bedrooms": null, "bathrooms": null, "parking": null, "area": null, "type": "rental_seasonal"}, {"title": "Mar de Jurerê Imóveis", "code": "H0001-F", "location": "Jurerê", "price": "1.950,00", "bedrooms": null, "bathrooms": null, "parking": null, "area": null, "type": "rental_seasonal"}, {"title": "Mar de Jurerê Imóveis", "code": "H0001-D", "location": "Jurerê", "price": "3.500,00", "bedrooms": null, "bathrooms": null, "parking": 1, "area": null, "type": "rental_seasonal"}, {"title": "Mar de Jurerê Imóveis", "code": "AAI0020-A", "location": "Jurerê", "price": "1.500,00", "bedrooms": null, "bathrooms": null, "parking": 2, "area": null, "type": "sale"}, {"title": "Mar de Jurerê Imóveis", "code": "AAI0025-A", "location": "Jurerê", "price": "900,00", "bedrooms": null, "bathrooms": null, "parking": 1, "area": null, "type": "sale"}, {"title": "Mar de Jurerê Imóveis", "code": "AAI0004-C", "location": "Jurerê", "price": "950,00", "bedrooms": null, "bathrooms": null, "parking": 1, "area": null, "type": "sale"}];
+const USD_RATE = 5.20;
+const WHATSAPP = '5548988752300';
+
+// Area gradient colors for placeholders
+const AREA_COLORS = {
+  'Ingleses': ['#1565C0', '#1976D2'],
+  'Jurerê': ['#00695C', '#00897B'],
+  'Jurerê Internacional': ['#00695C', '#00897B'],
+  'Jurerê Tradicional': ['#2E7D32', '#43A047'],
+  'Canasvieiras': ['#4527A0', '#5E35B1'],
+  'Santinho': ['#D84315', '#E64A19'],
+  'Campeche': ['#37474F', '#546E7A'],
+  'Cachoeira': ['#1B5E20', '#2E7D32'],
+  'Centro': ['#424242', '#616161'],
+  'Rio Vermelho': ['#B71C1C', '#D32F2F'],
+  'Trindade': ['#283593', '#3949AB'],
+  'Itacorubi': ['#4E342E', '#6D4C41'],
+  'Vargem': ['#1A237E', '#283593'],
+};
+
+const AREA_ICONS = {
+  'APARTAMENTO': '🏢', 'CASA': '🏡', 'COBERTURA': '✨', 
+  'TERRENO': '📐', 'DUPLEX': '🏘', 'SOBRADO': '🏘',
+};
+
+function parsePrice(s) {
+  if (!s || s === 'Consultar') return 0;
+  return parseFloat(s.replace(/\./g, '').replace(',', '.')) || 0;
+}
+
+function fmtBRL(v) {
+  if (!v) return 'Price on request';
+  return 'R$ ' + v.toLocaleString('pt-BR', {maximumFractionDigits:0});
+}
+
+function fmtUSD(brl) {
+  if (!brl || brl < 5000) return '';
+  return '≈ USD ' + Math.round(brl/USD_RATE).toLocaleString('en-US');
+}
+
+function normLoc(l) {
+  if (!l) return 'Florianópolis';
+  return l.charAt(0).toUpperCase() + l.slice(1).toLowerCase();
+}
+
+function getColors(loc) {
+  const nl = normLoc(loc);
+  return AREA_COLORS[nl] || ['#1B2951', '#2A3F6E'];
+}
+
+function typeLabel(t) {
+  return {sale:'For Sale', rental_seasonal:'Seasonal', rental_annual:'Annual Rental'}[t] || t;
+}
+
+function badgeClass(t) {
+  return t==='sale' ? 'badge-sale' : t==='rental_annual' ? 'badge-annual' : 'badge-rental';
+}
+
+// Generate GRONIS ID from listing
+function gronisId(l, i) {
+  const loc = (normLoc(l.location)||'FLN').substring(0,3).toUpperCase();
+  return `GRN-${loc}-${String(i+1).padStart(3,'0')}`;
+}
+
+function isVnjEligible(l) {
+  const p = parsePrice(l.price);
+  return l.type === 'sale' && p >= 1000000;
+}
+
+function whatsappUrl(l, id) {
+  const loc = normLoc(l.location);
+  const price = parsePrice(l.price);
+  const msg = encodeURIComponent(
+    `Hi! I'm interested in property ${id} in ${loc}, Florianópolis` + 
+    (price ? ` (${fmtBRL(price)})` : '') +
+    `. Could you please send me more details?`
+  );
+  return `https://wa.me/${WHATSAPP}?text=${msg}`;
+}
+
+function populateFilters() {
+  const locs = new Set();
+  LISTINGS.forEach(l => { if(l.location) locs.add(normLoc(l.location)); });
+  const sel = document.getElementById('filter-location');
+  [...locs].sort().forEach(loc => {
+    const o = document.createElement('option');
+    o.value = loc.toLowerCase();
+    o.textContent = loc;
+    sel.appendChild(o);
+  });
+}
+
+function resetFilters() {
+  document.querySelectorAll('.filters select').forEach(s => s.selectedIndex=0);
+  filterAndRender();
+}
+
+function filterAndRender() {
+  const ft = document.getElementById('filter-type').value;
+  const fl = document.getElementById('filter-location').value;
+  const fb = document.getElementById('filter-beds').value;
+  const fp = document.getElementById('filter-price').value;
+  const fv = document.getElementById('filter-vnj').value;
+  const sb = document.getElementById('sort-by').value;
+  
+  let filtered = LISTINGS.filter(l => {
+    if (ft!=='all' && l.type!==ft) return false;
+    if (fl!=='all' && normLoc(l.location).toLowerCase()!==fl) return false;
+    if (fb!=='all' && (!l.bedrooms || l.bedrooms < parseInt(fb))) return false;
+    if (fp!=='all') {
+      const p = parsePrice(l.price);
+      const max = parseInt(fp);
+      if (max === 999999999) { if (p < 2000000) return false; }
+      else { if (!p || p > max) return false; }
+    }
+    if (fv==='yes' && !isVnjEligible(l)) return false;
+    return true;
+  });
+  
+  filtered.sort((a,b) => {
+    const pa=parsePrice(a.price), pb=parsePrice(b.price);
+    if (sb==='price-asc') return pa-pb;
+    if (sb==='price-desc') return pb-pa;
+    if (sb==='area-desc') return (b.area||0)-(a.area||0);
+    return 0;
+  });
+  
+  renderGrid(filtered);
+  document.getElementById('showing-count').textContent = filtered.length;
+  document.getElementById('total-count').textContent = LISTINGS.length;
+}
+
+function renderGrid(items) {
+  const grid = document.getElementById('listings-grid');
+  grid.innerHTML = '';
+  
+  items.forEach((l, i) => {
+    const price = parsePrice(l.price);
+    const id = gronisId(l, LISTINGS.indexOf(l));
+    const [c1, c2] = getColors(l.location);
+    const icon = AREA_ICONS[l.propType] || '🏠';
+    const vnj = isVnjEligible(l);
+    
+    const card = document.createElement('div');
+    card.className = 'card';
+    
+    card.innerHTML = `
+      <div class="card-img">
+        <div class="card-img-placeholder" style="background:linear-gradient(135deg,${c1},${c2})">
+          <div class="placeholder-icon">${icon}</div>
+          <div class="placeholder-text">${normLoc(l.location)}</div>
+        </div>
+        <div class="card-badge ${badgeClass(l.type)}">${typeLabel(l.type)}</div>
+        ${vnj ? '<div class="card-vnj">✅ ВНЖ Eligible</div>' : ''}
+        <div class="card-gronis-id">${id}</div>
+      </div>
+      <div class="card-body">
+        <div class="card-location">📍 ${normLoc(l.location)}, Florianópolis</div>
+        <div class="card-price">${price ? fmtBRL(price) : 'Price on request'}</div>
+        <div class="card-price-usd">${fmtUSD(price)}</div>
+        <div class="card-features">
+          ${l.bedrooms ? `<div class="feature"><span class="feature-icon">🛏</span> ${l.bedrooms}</div>` : ''}
+          ${l.bathrooms ? `<div class="feature"><span class="feature-icon">🚿</span> ${l.bathrooms}</div>` : ''}
+          ${l.area ? `<div class="feature"><span class="feature-icon">📐</span> ${l.area} m²</div>` : ''}
+          ${l.parking ? `<div class="feature"><span class="feature-icon">🚗</span> ${l.parking}</div>` : ''}
+          ${l.propType ? `<div class="feature"><span class="feature-label">${l.propType}</span></div>` : ''}
+        </div>
+        <div class="card-cta">
+          <a class="btn-whatsapp" href="${whatsappUrl(l, id)}" target="_blank" onclick="event.stopPropagation()">💬 Request Info</a>
+          <button class="btn-details" onclick="openModal(${LISTINGS.indexOf(l)})">Details</button>
+        </div>
+      </div>
+    `;
+    
+    grid.appendChild(card);
+  });
+}
+
+function openModal(idx) {
+  const l = LISTINGS[idx];
+  const id = gronisId(l, idx);
+  const price = parsePrice(l.price);
+  
+  document.getElementById('modal-title').textContent = `${l.propType || 'Property'} in ${normLoc(l.location)}`;
+  document.getElementById('modal-location').textContent = `📍 ${normLoc(l.location)}, Florianópolis · ${id}`;
+  document.getElementById('modal-price').textContent = price ? `${fmtBRL(price)} ${fmtUSD(price)}` : 'Price on request';
+  
+  let features = '';
+  if (l.bedrooms) features += `<div class="feature"><span class="feature-icon">🛏</span> ${l.bedrooms} bedrooms</div>`;
+  if (l.bathrooms) features += `<div class="feature"><span class="feature-icon">🚿</span> ${l.bathrooms} bathrooms</div>`;
+  if (l.area) features += `<div class="feature"><span class="feature-icon">📐</span> ${l.area} m²</div>`;
+  if (l.parking) features += `<div class="feature"><span class="feature-icon">🚗</span> ${l.parking} parking</div>`;
+  document.getElementById('modal-features').innerHTML = features;
+  
+  let desc = `Property ${id} in ${normLoc(l.location)}. `;
+  if (isVnjEligible(l)) desc += '✅ This property qualifies for Brazilian Investor Visa (ВНЖ). ';
+  desc += 'Contact us for floor plans, additional photos, and investment analysis.';
+  document.getElementById('modal-desc').textContent = desc;
+  
+  document.getElementById('modal-cta').href = whatsappUrl(l, id);
+  document.getElementById('modal').classList.add('active');
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('active');
+}
+
+// Lang switch (simplified)
+let currentLang = 'en';
+function setLang(lang) {
+  currentLang = lang;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+  // TODO: full i18n
+}
+
+// Init
+populateFilters();
+filterAndRender();
+['filter-type','filter-location','filter-beds','filter-price','filter-vnj','sort-by'].forEach(id => {
+  document.getElementById(id).addEventListener('change', filterAndRender);
+});
+</script>
+</body>
+</html>
